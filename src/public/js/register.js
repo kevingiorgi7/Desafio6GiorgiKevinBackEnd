@@ -7,6 +7,7 @@ form.addEventListener('submit',async(e)=>{
     const data = new FormData(form);
     const obj = {};
     data.forEach((value, key) => (obj[key] = value))
+    
     const response = await fetch('/api/sessions/register',{
         method:'POST',
         body: JSON.stringify(obj),
@@ -15,9 +16,10 @@ form.addEventListener('submit',async(e)=>{
         }
     })
     const responseData = await response.json()
+    //console.log(responseData);
     if(responseData.status==="success"){
         //Redirijo al login (desde el front)
         window.location.replace('/api/views/login');
     }
-    console.log(responseData);
+    //console.log(responseData);
 })

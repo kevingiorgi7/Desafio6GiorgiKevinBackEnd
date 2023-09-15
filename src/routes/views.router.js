@@ -38,7 +38,8 @@ router.get("/products", async (req, res) => {
         const payload = info.payload;
         res.render("products", {
             info,
-            payload
+            payload,
+            user:req.session.user
         });
     } catch (error) {
         throw res.status(500).json({
@@ -99,7 +100,19 @@ router.get("/realtimeproducts", async (req, res) => {
 
 
 // Sessions
-router.get('/register',(req,res)=>{
+
+const publicAcces = (req,res,next) =>{
+    if(req.session.user) return res.redirect('/api/views/profile');
+    next();
+}
+
+const privateAcces = (req,res,next)=>{
+    if(!req.session.user) return res.redirect('/api/views/login');
+    next();
+}
+
+
+router.get('/register',publicAcces,(req,res)=>{
     try {
         res.render('register')
     } catch (error) {
@@ -109,7 +122,7 @@ router.get('/register',(req,res)=>{
     }
 })
 
-router.get('/login',(req,res)=>{
+router.get('/login',publicAcces,(req,res)=>{
     try {
         res.render('login')
     } catch (error) {
@@ -119,8 +132,9 @@ router.get('/login',(req,res)=>{
     }
 })
 
-router.get('/profile', (req,res)=>{
+router.get('/profile',privateAcces, (req,res)=>{
     try {
+        console.log(req.session.user);
         res.render('profile',{user:req.session.user})
     } catch (error) {
         throw res.status(500).json({
